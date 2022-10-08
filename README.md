@@ -8,7 +8,9 @@
 
 ## 🔨 Usage
 
-WIP
+```elisp
+(ffpc-project-or-current-dir "[.]sh" "Select a shellscript: ")
+```
 
 ## Contribute
 
