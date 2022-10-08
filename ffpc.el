@@ -31,6 +31,8 @@
 
 ;;; Code:
 
+(require 'project)
+
 (require 'dash)
 (require 'f)
 
