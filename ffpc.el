@@ -122,10 +122,7 @@ multiple files at a time.  We need a title to present which file to select."
                 (ignore-errors (ffpc-select-file-in-project filename title)))))
       filepath
     (user-error
-     (concat "[ERROR] Can't find file '%s' in the project or current directory "
-             ", make sure the project root exists or the '%s' file exists in the "
-             "current directory")
-     filename filename)))
+     "No valid file found in either current directory or project, %s" filename)))
 
 (provide 'ffpc)
 ;;; ffpc.el ends here
