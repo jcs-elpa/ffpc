@@ -127,4 +127,5 @@ multiple files at a time.  We need a title to present which file to select."
      "No valid file found in either current directory or project, %s" filename)))
 
 (provide 'ffpc)
+
 ;;; ffpc.el ends here
