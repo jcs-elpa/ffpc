@@ -31,8 +31,6 @@
 
 ;;; Code:
 
-
-
 (require 'project)
 
 (require 'dash)
