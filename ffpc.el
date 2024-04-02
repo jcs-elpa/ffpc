@@ -6,7 +6,7 @@
 ;; Maintainer: Shen, Jen-Chieh <jcs090218@gmail.com>
 ;; URL: https://github.com/jcs-elpa/ffpc
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "26.1") (dash "2.12.0") (f "0.20.0"))
+;; Package-Requires: ((emacs "28.1") (dash "2.12.0") (f "0.20.0"))
 ;; Keywords: lisp
 
 ;; This file is not part of GNU Emacs.
@@ -31,6 +31,7 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'project)
 
 (require 'dash)
@@ -45,6 +46,14 @@
 ;;
 ;; (@* "Util" )
 ;;
+
+(defun ffpc--project-root ()
+  "Return project directory path."
+  (when-let ((current (project-current))) (project-root current)))
+
+(defun ffpc--listify (obj)
+  "Turn OBJ to list."
+  (if (listp obj) obj (list obj)))
 
 (defun ffpc-directories-ignored-dir (path &optional rec)
   "Find all directories in PATH by ignored common directories with FN and REC."
@@ -72,6 +81,12 @@
 ;; (@* "API" )
 ;;
 
+(defun ffpc--match-file (regexs it)
+  "Return if IT matches REGEXS."
+  (let ((regexs (ffpc--listify regexs))
+        (it (f-filename it)))
+    (cl-some (lambda (regex) (string-match-p regex it)) regexs)))
+
 ;;;###autoload
 (defun ffpc-select-file-current-dir (filename title)
   "Find FILENAME in current directory.
@@ -82,7 +97,7 @@ Argument TITLE is a string used when there are more than one matches."
   (let* ((target-files
           (ffpc-files-ignored-dir default-directory
                                   (lambda (file)
-                                    (string-match-p filename (f-filename file)))))
+                                    (ffpc--match-file filename file))))
          (target-files-len (length target-files)))
     (when (zerop target-files-len)
       (user-error "[ERROR] No file '%s' found in the current directory" filename))
@@ -97,15 +112,14 @@ Argument TITLE is a string used when there are more than one matches."
 Argument FILENAME accept regular expression string.
 
 Argument TITLE is a string used when there are more than one matches."
-  (let ((project-dir (jcs-project-root)) target-files target-files-len)
-    ;; Do the find file only when the project directory exists.
-    (when project-dir
-      (setq target-files
-            (ffpc-files-ignored-dir project-dir
-                                    (lambda (file)
-                                      (string-match-p filename (f-filename file)))
-                                    t)))
-    (when target-files (setq target-files-len (length target-files)))
+  (let* ((project-dir (ffpc--project-root))
+         ;; Do the find file only when the project directory exists.
+         (target-files (when project-dir
+                         (ffpc-files-ignored-dir project-dir
+                                                 (lambda (file)
+                                                   (ffpc--match-file filename file))
+                                                 t)))
+         (target-files-len (when target-files (length target-files))))
     (unless target-files-len
       (user-error "[ERROR] No file '%s' found in project, make sure the project root exists" filename))
     (if (= target-files-len 1)
