@@ -3,7 +3,7 @@
          "Find file in project or current directory")
 
 (website-url "https://github.com/jcs-elpa/ffpc")
-(keywords "tools")
+(keywords "lisp")
 
 (package-file "ffpc.el")
 
