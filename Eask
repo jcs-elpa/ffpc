@@ -1,3 +1,5 @@
+;; -*- mode: eask; lexical-binding: t -*-
+
 (package "ffpc"
          "0.1.0"
          "Find file in project or current directory")
